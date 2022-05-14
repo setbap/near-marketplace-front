@@ -7,21 +7,20 @@ import { accountBalance, login } from "../config/near";
 import { Product } from "../model";
 
 function DonatedProducts() {
-    const account = window.walletConnection.account();
     const [products, setProducts] = useState([]);
     const [balance, setBalance] = useState("0");
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
-    const getBalance = useCallback(async () => {
+    const [accId, setAccId] = useState("")
+    const account = window.walletConnection.account();
+    const getAcc = useCallback(async () => {
         if (account.accountId) {
-            setBalance(await accountBalance());
+            setAccId(window.walletConnection.account().accountId);
         }
     }, []);
-
     useEffect(() => {
-        getBalance()
-
-    }, [getBalance]);
+        getAcc();
+    }, [getAcc]);
     const fetchProducts = useCallback(async () => {
         if (account.accountId) {
             const products = await getDonatedProduct(account.accountId);
@@ -32,7 +31,7 @@ function DonatedProducts() {
         fetchProducts().finally(() => setLoading(false));
     }, []);
 
-    if (!account.id) {
+    if (!accId) {
         return <Container minH={'calc(100vh - 125px)'} maxW={'7xl'}>
             <Stack direction='column' justify={'center'} alignItems='center' h='full' pt={'8'} spacing={4}>
                 <Text>To Use Dapp</Text>
@@ -68,8 +67,8 @@ function DonatedProducts() {
         )
     }
     return <>
-        <Container minH={'calc(100vh - 125px)'} maxW='container.xl'>
-            <SimpleGrid minChildWidth='400px' spacing='1'>
+        <Container minH={'calc(100vh - 125px)'} maxW={'8xl'}>
+            <SimpleGrid minChildWidth='400px' pt={'4'} spacing='4'>
                 {products.map((product: Product) => (
                     <CardItem key={product.id} product={product} />
                 ))}

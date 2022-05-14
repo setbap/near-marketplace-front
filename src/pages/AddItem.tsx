@@ -12,6 +12,7 @@ import {
     Container,
     Text,
 } from '@chakra-ui/react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { createProduct } from '../config/marketplace';
 import { login } from '../config/near';
@@ -51,9 +52,17 @@ export default function AddPage() {
     //     <textarea {...register("description", { required: true, maxLength: 1024 })} />
     //     <input type="submit" />
     // </form>
+    const [accId, setAccId] = useState("")
     const account = window.walletConnection.account();
-
-    if (!account.id) {
+    const getAcc = useCallback(async () => {
+        if (account.accountId) {
+            setAccId(window.walletConnection.account().accountId);
+        }
+    }, []);
+    useEffect(() => {
+        getAcc();
+    }, [getAcc]);
+    if (!accId) {
         return <Container minH={'calc(100vh - 125px)'} maxW={'7xl'}>
             <Stack direction='column' justify={'center'} alignItems='center' h='full' pt={'8'} spacing={4}>
                 <Text>To Use Dapp</Text>

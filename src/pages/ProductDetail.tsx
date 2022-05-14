@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
     Box,
     Container,
@@ -11,7 +12,7 @@ import {
     SimpleGrid,
     StackDivider,
     useColorModeValue,
-    List,
+    Link as CLink,
     ListItem,
     HStack,
     Tag,
@@ -20,7 +21,7 @@ import {
     Spinner,
 } from '@chakra-ui/react';
 import { useState, useCallback, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { donateProduct, getProduct } from '../config/marketplace';
 import { login } from '../config/near';
 import { Product } from '../model';
@@ -28,25 +29,29 @@ import { Product } from '../model';
 
 export default function DetailProduct() {
     const [value, setValue] = useState("")
+    const [accId, setAccId] = useState("")
+
     const toast = useToast()
     const handleChange = (event: any) => {
         setValue(event.target.value)
     }
-    const account = window.walletConnection.account();
     const [products, setProducts] = useState<Product>(null);
     let params = useParams();
 
+    const account = window.walletConnection.account();
     const fetchProduct = useCallback(async () => {
         if (account.accountId) {
             const products = await getProduct({ id: params.pid });
             setProducts(products);
+            setAccId(window.walletConnection.account().accountId);
+
         }
     }, []);
     useEffect(() => {
         fetchProduct();
     }, []);
 
-    if (!account.id) {
+    if (!accId) {
         return <Container minH={'calc(100vh - 125px)'} maxW={'7xl'}>
             <Stack direction='column' justify={'center'} alignItems='center' h='full' pt={'8'} spacing={4}>
                 <Text>To Use Dapp</Text>
@@ -66,7 +71,7 @@ export default function DetailProduct() {
             </Stack>
         </Container>
     ) : (
-        <Container minH={'calc(100vh - 125px)'} maxW={'7xl'}>
+        <Container minH={'calc(100vh - 125px)'} pb='4' maxW={'7xl'}>
             <SimpleGrid
                 columns={{ base: 1, lg: 2 }}
                 spacing={{ base: 8, md: 10 }}
@@ -89,7 +94,9 @@ export default function DetailProduct() {
                             lineHeight={1.1}
                             fontWeight={600}
                             fontSize={{ base: '2xl', sm: '4xl', lg: '5xl' }}>
-                            {products?.name}
+                            <CLink href={products.location} isExternal>
+                                {products?.name}  <ExternalLinkIcon mx='2px' />
+                            </CLink>
                         </Heading>
 
                     </Box>
@@ -119,7 +126,7 @@ export default function DetailProduct() {
                                 fontWeight={'500'}
                                 textTransform={'uppercase'}
                                 mb={'4'}>
-                                Donated People
+                                Donaters
                             </Text>
 
                             <Flex wrap={'wrap'} gap='2'>

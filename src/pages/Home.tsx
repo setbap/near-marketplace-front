@@ -7,18 +7,17 @@ import { Product } from "../model";
 
 function Home() {
     const [products, setProducts] = useState([]);
-    const [balance, setBalance] = useState("0");
     const [loading, setLoading] = useState(true);
+    const [accId, setAccId] = useState("")
     const account = window.walletConnection.account();
-    const getBalance = useCallback(async () => {
+    const getAcc = useCallback(async () => {
         if (account.accountId) {
-            setBalance(await accountBalance());
+            setAccId(window.walletConnection.account().accountId);
         }
     }, []);
-
     useEffect(() => {
-        getBalance();
-    }, [getBalance]);
+        getAcc();
+    }, [getAcc]);
 
     const fetchProducts = useCallback(async () => {
         if (account.accountId) {
@@ -30,7 +29,7 @@ function Home() {
     useEffect(() => {
         fetchProducts();
     }, []);
-    if (!account.id) {
+    if (!accId) {
         return <Container minH={'calc(100vh - 125px)'} maxW={'7xl'}>
             <Stack direction='column' justify={'center'} alignItems='center' h='full' pt={'8'} spacing={4}>
                 <Text>To Use Dapp</Text>
@@ -43,8 +42,8 @@ function Home() {
     }
     if (loading) {
         return (
-            <Container minH={'calc(100vh - 125px)'} maxW={'7xl'}>
-                <Stack direction='row' justify={'center'} alignItems='center' h='full' pt={'8'} spacing={4}>
+            <Container minH={'calc(100vh - 125px)'} pb='4' maxW={'8xl'}>
+                <Stack direction='row' justify={'center'} alignItems='center' h='full' pt={'8'} spacing={7}>
                     <Spinner size='xl' />
                     <Text>Loading</Text>
                 </Stack>
@@ -53,8 +52,8 @@ function Home() {
     }
     return (
         <>
-            <Container minH={'calc(100vh - 125px)'} maxW='container.xl'>
-                <SimpleGrid minChildWidth='400px' spacing='1'>
+            <Container minH={'calc(100vh - 125px)'} maxW={'8xl'}>
+                <SimpleGrid minChildWidth='400px' pt={'4'} spacing='4'>
                     {products.map((product: Product) => (
                         <CardItem key={product.id} product={product} />
                     ))}

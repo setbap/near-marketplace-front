@@ -19,7 +19,7 @@ export default function CardItem({ product }: { product: Product }) {
     const navigation = useNavigate();
 
     return (
-        <Center pt={2}>
+        <Center pt={0}>
             <Stack
                 borderWidth="1px"
                 borderRadius="lg"
@@ -80,7 +80,7 @@ export default function CardItem({ product }: { product: Product }) {
                             }}>
                             View
                         </Button>
-                        <Button
+                        {/* <Button
                             flex={1}
                             fontSize={'sm'}
                             rounded={'full'}
@@ -99,7 +99,7 @@ export default function CardItem({ product }: { product: Product }) {
                                 bg: 'blue.500',
                             }}>
                             Donate
-                        </Button>
+                        </Button> */}
                     </Stack>
                 </Stack>
             </Stack>
